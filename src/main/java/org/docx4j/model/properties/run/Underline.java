@@ -48,9 +48,9 @@ public class Underline extends AbstractRunProperty {
 		
 		U u = Context.getWmlObjectFactory().createU();
 		
-		if (value.getCssText().toLowerCase().equals("underline")) {
+		if (value.getCssText().toLowerCase().contains("underline")) {
 			u.setVal(UnderlineEnumeration.SINGLE);
-		} else if (value.getCssText().toLowerCase().equals("underline")) {
+		} else if (value.getCssText().toLowerCase().contains("underline")) {
 			u.setVal(UnderlineEnumeration.NONE);
 		} else {
 			log.error("How to handle " + CSS_NAME + " " + value.getCssText().toLowerCase());

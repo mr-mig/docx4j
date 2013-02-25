@@ -43,7 +43,7 @@ public class Strike extends AbstractRunProperty {
 	
 	public Strike(CSSValue value) {
 		
-		if (value.getCssText().toLowerCase().equals("line-through")) {
+		if (value.getCssText().toLowerCase().contains("line-through")) {
 			this.setObject( Context.getWmlObjectFactory().createBooleanDefaultTrue()  );
 		} else {
 			BooleanDefaultTrue bdt = Context.getWmlObjectFactory().createBooleanDefaultTrue();

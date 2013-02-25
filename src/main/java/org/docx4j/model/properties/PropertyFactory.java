@@ -554,9 +554,9 @@ public class PropertyFactory {
 				// font-style
 				return new Italics(value);
 			} else if (name.equals("text-decoration")) {
-				if (value.getCssText().toLowerCase().equals("line-through")) {
+				if (value.getCssText().toLowerCase().contains("line-through")) {
 					return new Strike(value);
-				} else if (value.getCssText().toLowerCase().equals("underline")) {
+				} else if (value.getCssText().toLowerCase().contains("underline")) {
 					return new Underline(value);
 				} else {
 					log.error("What to do for " + name + ":" + value.getCssText());
