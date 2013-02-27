@@ -21,6 +21,7 @@ package org.docx4j.model.properties.run;
 
 import org.docx4j.UnitsOfMeasurement;
 import org.docx4j.jaxb.Context;
+import org.docx4j.model.properties.PropertyUtils;
 import org.docx4j.org.xhtmlrenderer.css.parser.FSColor;
 import org.docx4j.org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.docx4j.org.xhtmlrenderer.css.parser.PropertyValue;
@@ -48,29 +49,10 @@ public class FontColor extends AbstractRunProperty {
 
 	public FontColor(CSSValue value) {
 		
-		// PrimitiveType 25 -> RGBCOLOR
-		short ignored = 1;
+		String hexColor = PropertyUtils.convertCssValueToHEXColor(value);
 
-    float fRed;
-    float fGreen;
-    float fBlue;
-
-		CSSPrimitiveValue cssPrimitiveValue = (CSSPrimitiveValue)value;
-    try {
-      fRed = cssPrimitiveValue.getRGBColorValue().getRed().getFloatValue(ignored);
-      fGreen = cssPrimitiveValue.getRGBColorValue().getGreen().getFloatValue(ignored);
-      fBlue = cssPrimitiveValue.getRGBColorValue().getBlue().getFloatValue(ignored);
-    } catch (UnsupportedOperationException e) {
-      if (!(cssPrimitiveValue instanceof PropertyValue)) throw e;
-      final FSColor fsColor = ((PropertyValue) cssPrimitiveValue).getFSColor();
-      if (!(fsColor instanceof FSRGBColor)) throw e;
-      fRed = ((FSRGBColor) fsColor).getRed();
-      fGreen = ((FSRGBColor) fsColor).getGreen();
-      fBlue = ((FSRGBColor) fsColor).getBlue();
-    }
-		
-		Color color = Context.getWmlObjectFactory().createColor();
-		color.setVal( UnitsOfMeasurement.rgbTripleToHex(fRed, fGreen, fBlue)  );
+        Color color = Context.getWmlObjectFactory().createColor();
+		color.setVal(hexColor);
 		
 		this.setObject(color);
 

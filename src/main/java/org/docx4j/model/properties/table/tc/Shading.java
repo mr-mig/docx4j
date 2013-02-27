@@ -19,18 +19,11 @@
  */
 package org.docx4j.model.properties.table.tc;
 
-import org.docx4j.UnitsOfMeasurement;
 import org.docx4j.jaxb.Context;
+import org.docx4j.model.properties.PropertyUtils;
 import org.docx4j.wml.CTShd;
-import org.docx4j.wml.CTVerticalJc;
-import org.docx4j.wml.Color;
-import org.docx4j.wml.PPr;
-import org.docx4j.wml.STShd;
-import org.docx4j.wml.STVerticalJc;
 import org.docx4j.wml.TcPr;
-import org.docx4j.wml.PPrBase.TextAlignment;
 import org.w3c.dom.Element;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class Shading extends AbstractTcProperty {
@@ -52,16 +45,8 @@ public class Shading extends AbstractTcProperty {
 	public Shading(CSSValue value) {	
 		
 		CTShd shd = Context.getWmlObjectFactory().createCTShd();
-
-		// PrimitiveType 25 -> RGBCOLOR
-		short ignored = 1;
-
-		CSSPrimitiveValue cssPrimitiveValue = (CSSPrimitiveValue)value;
-		float fRed = cssPrimitiveValue.getRGBColorValue().getRed().getFloatValue(ignored); 
-		float fGreen = cssPrimitiveValue.getRGBColorValue().getGreen().getFloatValue(ignored); 
-		float fBlue = cssPrimitiveValue.getRGBColorValue().getBlue().getFloatValue(ignored); 
-		
-		shd.setFill(UnitsOfMeasurement.rgbTripleToHex(fRed, fGreen, fBlue)  );
+        String hexColor = PropertyUtils.convertCssValueToHEXColor(value);
+        shd.setFill(hexColor);
 
 		this.setObject( shd  );
 	}

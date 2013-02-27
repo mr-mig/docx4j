@@ -345,7 +345,7 @@ public class XHTMLImporter {
     /**
      * Convert the well formed XHTML found at the specified URI to a list of WML objects.
      * 
-     * @param uri
+     * @param url
      * @param wordMLPackage
      * @return
      */
@@ -1302,7 +1302,7 @@ public class XHTMLImporter {
         	String cssName = (String)o;
         	CSSValue cssValue = (CSSValue)cssMap.get(cssName);
         	
-        	Property p = PropertyFactory.createPropertyFromCssName(cssName, cssValue);
+        	Property p = PropertyFactory.createParagraphPropertyFromCssName(cssName, cssValue);
         	
         	if (p!=null) {
 	        	if (p instanceof AbstractParagraphProperty) {        		
@@ -1333,7 +1333,7 @@ public class XHTMLImporter {
         	String cssName = (String)o;
         	CSSValue cssValue = (CSSValue)cssMap.get(cssName);
         	
-        	Property p = PropertyFactory.createPropertyFromCssName(cssName, cssValue);
+        	Property p = PropertyFactory.createRunPropertyFromCssName(cssName, cssValue);
         	
         	if (p!=null) {
 	        	if (p instanceof AbstractRunProperty) {        		

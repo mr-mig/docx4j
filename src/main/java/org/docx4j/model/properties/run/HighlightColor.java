@@ -25,10 +25,30 @@ import org.docx4j.wml.RPr;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSValue;
 
+import java.util.HashMap;
+
 public class HighlightColor extends AbstractRunProperty {
 	
 	public final static String CSS_NAME = "background-color"; 
-	public final static String FO_NAME  = "background-color"; 
+	public final static String FO_NAME  = "background-color";
+    private final static HashMap<String,String> COLOR_MAP = new HashMap<String, String>(){{
+        this.put("#000000","black");
+        this.put("#0000ff","blue");
+        this.put("#00ffff","cyan");
+        this.put("#008000","green");
+        this.put("#ff00ff","magenta");
+        this.put("#ff0000","red");
+        this.put("#ffff00","yellow");
+        this.put("#ffffff","white");
+        this.put("#00008b","darkBlue");
+        this.put("#008b8b","darkCyan");
+        this.put("#006400","darkGreen");
+        this.put("#8b008b","darkMagenta");
+        this.put("#8b0000","darkRed");
+        this.put("#808000","darkYellow");
+        this.put("#a9a9a9","darkGray");
+        this.put("#d3d3d3","lightGray");
+    }};
 	
 	/**
 	 * @since 2.7.2
@@ -53,8 +73,12 @@ public class HighlightColor extends AbstractRunProperty {
 	
 	public HighlightColor(CSSValue value) {	
 		
-		Highlight shd = Context.getWmlObjectFactory().createHighlight();		
-		shd.setVal(value.getCssText());
+		Highlight shd = Context.getWmlObjectFactory().createHighlight();
+        String shadeColor = value.getCssText();
+        if (COLOR_MAP.containsKey(value.getCssText())){
+            shadeColor = COLOR_MAP.get(value.getCssText());
+        }
+		shd.setVal(shadeColor);
 		this.setObject( shd  );
 	}
 
