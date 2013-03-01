@@ -59,8 +59,22 @@ public class FontSize extends AbstractRunProperty {
 			}
 			
 		} else  if (cssPrimitiveValue.getPrimitiveType()!=CSSPrimitiveValue.CSS_PT) {
-			log.error("TODO FontSize Handle units: " + cssPrimitiveValue.getPrimitiveType() );
-			debug(CSS_NAME, value);
+            int ptValue = 22;
+            short ignored = 1;
+            int valueType = cssPrimitiveValue.getPrimitiveType();
+
+            if (valueType == CSSPrimitiveValue.CSS_PX){
+                ptValue = convertFromPx(cssPrimitiveValue.getFloatValue(ignored));
+            } else if (valueType == CSSPrimitiveValue.CSS_EMS){
+                ptValue = convertFromEm(cssPrimitiveValue.getFloatValue(ignored));
+            } else if (valueType == CSSPrimitiveValue.CSS_PERCENTAGE){
+                ptValue = convertFromPercent(cssPrimitiveValue.getFloatValue(ignored));
+            } else {
+                log.warn("The conversion to pt cannot be done. This size unit in not supported:" + cssPrimitiveValue.getCssText());
+                debug(CSS_NAME, value);
+            }
+			hpsMeasure.setVal(BigInteger.valueOf(ptValue));
+            this.setObject(hpsMeasure);
 		} else {
 			short ignored = 1;
 			float fVal = cssPrimitiveValue.getFloatValue(ignored); // unit type ignored in cssparser
@@ -71,7 +85,19 @@ public class FontSize extends AbstractRunProperty {
 		}
 	}
 
-	@Override
+    private int convertFromPercent(float pVal) {
+        return 2 * Math.round(pVal * 100/12);
+    }
+
+    private int convertFromEm(float emValue) {
+        return 2 * Math.round(12*emValue);
+    }
+
+    private int convertFromPx(float pxVal) {
+        return 2 * Math.round(pxVal * 3 / 4);
+    }
+
+    @Override
 	public String getCssProperty() {
 		
 		if (((HpsMeasure)this.getObject())!=null ) {
