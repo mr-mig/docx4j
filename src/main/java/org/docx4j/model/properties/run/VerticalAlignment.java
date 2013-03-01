@@ -52,12 +52,14 @@ public class VerticalAlignment extends AbstractRunProperty {
 	public VerticalAlignment(CSSValue value) {
 		
 		CTVerticalAlignRun vAlign = Context.getWmlObjectFactory().createCTVerticalAlignRun();
+
+        String strValue = value.getCssText().toLowerCase();
 		
-		if (value.getCssText().toLowerCase().equals("top")) {			
+		if (strValue.equals("top") || strValue.equals("super")) {
 			vAlign.setVal(STVerticalAlignRun.SUPERSCRIPT);			
 			this.setObject( vAlign );
-		} else if (value.getCssText().toLowerCase().equals("bottom")) {
-			vAlign.setVal(STVerticalAlignRun.SUBSCRIPT);			
+		} else if (strValue.equals("bottom") || strValue.equals("sub")) {
+			vAlign.setVal(STVerticalAlignRun.SUBSCRIPT);
 			this.setObject( vAlign );
 		} else {
 			log.warn("What to do with value: " + value.getCssText());
