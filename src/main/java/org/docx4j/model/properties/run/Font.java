@@ -50,8 +50,15 @@ public class Font extends AbstractRunProperty {
 
 	public Font(CSSValue value) {
 		
-		debug(CSS_NAME, value);
-		log.warn("TODO");
+        String fontName = value.getCssText();
+        if (fontName.contains(",")){
+            fontName = fontName.split(",")[0];
+        }
+
+        RFonts rFonts = new RFonts();
+        rFonts.setAscii(fontName);
+        rFonts.setHAnsi(fontName);
+        this.setObject(rFonts);
 	}
 	
 
