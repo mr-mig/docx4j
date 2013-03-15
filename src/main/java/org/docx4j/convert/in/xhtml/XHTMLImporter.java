@@ -70,31 +70,15 @@ import org.docx4j.org.xhtmlrenderer.render.BlockBox;
 import org.docx4j.org.xhtmlrenderer.render.Box;
 import org.docx4j.org.xhtmlrenderer.render.InlineBox;
 import org.docx4j.org.xhtmlrenderer.resource.XMLResource;
-import org.docx4j.wml.CTTblLayoutType;
+import org.docx4j.wml.*;
+import org.docx4j.vml.wordprocessingDrawing.STBorderType;
 import org.docx4j.wml.CTTblPrBase.TblStyle;
-import org.docx4j.wml.Numbering;
-import org.docx4j.wml.P;
 import org.docx4j.wml.P.Hyperlink;
-import org.docx4j.wml.PPr;
 import org.docx4j.wml.PPrBase.NumPr;
 import org.docx4j.wml.PPrBase.NumPr.Ilvl;
 import org.docx4j.wml.PPrBase.NumPr.NumId;
-import org.docx4j.wml.R;
-import org.docx4j.wml.RPr;
-import org.docx4j.wml.RStyle;
-import org.docx4j.wml.STTblLayoutType;
-import org.docx4j.wml.Tbl;
-import org.docx4j.wml.TblBorders;
-import org.docx4j.wml.TblGrid;
-import org.docx4j.wml.TblGridCol;
-import org.docx4j.wml.TblPr;
-import org.docx4j.wml.TblWidth;
-import org.docx4j.wml.Tc;
-import org.docx4j.wml.TcPr;
 import org.docx4j.wml.TcPrInner.GridSpan;
 import org.docx4j.wml.TcPrInner.VMerge;
-import org.docx4j.wml.Text;
-import org.docx4j.wml.Tr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -561,13 +545,19 @@ public class XHTMLImporter {
             		// If it is not 'none', for example 'solid', display a border.
             		// cssTable.getBorder requires a CssContext; so just
             		FSDerivedValue borderTopStyle = box.getStyle().valueByName(CSSName.BORDER_TOP_STYLE);
-            		if (borderTopStyle!=null  // what to default to if its null?
-            				&& borderTopStyle.asString().toLowerCase().contains("none")) {
-            			log.debug("setting borders to none");
-            			try {
-							TblBorders borders = (TblBorders)XmlUtils.unmarshalString(WORDML_TABLE_BORDERS, Context.jc, TblBorders.class);
-							tblPr.setTblBorders(borders);
-						} catch (JAXBException e1) {}            			
+            		if (borderTopStyle!=null) { // what to default to if its null?
+                        if (borderTopStyle.asString().toLowerCase().contains("none")) {
+                            log.debug("setting borders to none");
+                            try {
+                                TblBorders borders = (TblBorders)XmlUtils.unmarshalString(WORDML_TABLE_BORDERS, Context.jc, TblBorders.class);
+                                tblPr.setTblBorders(borders);
+                            } catch (JAXBException e1) {}
+                        } else {
+                            String bStyle = borderTopStyle.asString().toLowerCase();
+                            float bSize = box.getStyle().valueByName(CSSName.BORDER_TOP_WIDTH).asFloat();
+                            TblBorders tblBorders = getFullTableBorderSetup(bStyle, bSize);
+                            tblPr.setTblBorders(tblBorders);
+                        }
             		} 
             		
             		// Table indent.  
@@ -947,7 +937,32 @@ public class XHTMLImporter {
     
     }
 
-	/**
+    private TblBorders getFullTableBorderSetup(String bStyle, float bSize) {
+        TblBorders tblBorders = new TblBorders();
+        tblBorders.setTop(createBorder(bStyle, bSize));
+        tblBorders.setBottom(createBorder(bStyle, bSize));
+        tblBorders.setInsideH(createBorder(bStyle, bSize));
+        tblBorders.setInsideV(createBorder(bStyle, bSize));
+        tblBorders.setLeft(createBorder(bStyle, bSize));
+        tblBorders.setRight(createBorder(bStyle, bSize));
+        return tblBorders;
+    }
+
+    private CTBorder createBorder(String bStyle, float bSize) {
+        CTBorder border = new CTBorder();
+        try{
+            border.setVal(STBorder.fromValue(bStyle));
+        } catch(IllegalArgumentException iae){
+            border.setVal(STBorder.SINGLE);
+        }
+        // The size is set in line points (1 lp = 1/8 pt)
+        // so we convert it to pt
+        BigInteger realSize = BigInteger.valueOf(Math.round(bSize * 8));
+        border.setSz(realSize);
+        return border;
+    }
+
+    /**
 	 * nested tables XHTML renderer seems to construct a tree: table/table
 	 * instead of table/tr/td/table?
 	 * TODO fix this upstream.
