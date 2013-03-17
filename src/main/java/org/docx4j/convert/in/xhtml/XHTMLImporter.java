@@ -546,7 +546,8 @@ public class XHTMLImporter {
             		// cssTable.getBorder requires a CssContext; so just
             		FSDerivedValue borderTopStyle = box.getStyle().valueByName(CSSName.BORDER_TOP_STYLE);
             		if (borderTopStyle!=null) { // what to default to if its null?
-                        if (borderTopStyle.asString().toLowerCase().contains("none")) {
+                        float bSize = box.getStyle().valueByName(CSSName.BORDER_TOP_WIDTH).asFloat();
+                        if (borderTopStyle.asString().toLowerCase().contains("none") || bSize == 0.0) {
                             log.debug("setting borders to none");
                             try {
                                 TblBorders borders = (TblBorders)XmlUtils.unmarshalString(WORDML_TABLE_BORDERS, Context.jc, TblBorders.class);
@@ -554,7 +555,6 @@ public class XHTMLImporter {
                             } catch (JAXBException e1) {}
                         } else {
                             String bStyle = borderTopStyle.asString().toLowerCase();
-                            float bSize = box.getStyle().valueByName(CSSName.BORDER_TOP_WIDTH).asFloat();
                             TblBorders tblBorders = getFullTableBorderSetup(bStyle, bSize);
                             tblPr.setTblBorders(tblBorders);
                         }
