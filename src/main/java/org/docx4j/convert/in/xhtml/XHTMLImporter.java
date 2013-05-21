@@ -460,7 +460,7 @@ public class XHTMLImporter {
     	}    
     
     private void traverse(Box box, List<Object> contentContext, Box parent, TableProperties tableProperties) throws Docx4JException {
-        
+
         log.debug(box.getClass().getName() );
         if (box instanceof BlockBox) {
             BlockBox blockBox = ((BlockBox)box);
@@ -1279,6 +1279,7 @@ public class XHTMLImporter {
             run.getContent().add(text);
             
             currentP.getContent().add(run);
+            currentP.setPPr(addParagraphProperties(cssMap));
             
             // Run level styling
             run.setRPr(
